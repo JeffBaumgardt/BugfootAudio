@@ -23,6 +23,7 @@ class AudioTable extends Component {
 	constructor() {
 		super()
 		this.handleChange = this.handleChange.bind(this)
+        this.clearFilter = this.clearFilter.bind(this)
 	}
     componentDidMount() {
         this.props.dispatch(requestFiles())
@@ -36,6 +37,10 @@ class AudioTable extends Component {
         this.props.dispatch(filterFiles(e.target.value))
 	}
 
+    clearFilter() {
+        this.props.dispatch(filterFiles(''))
+    }
+
 	render() {
 		if (this.props.loading) {
 			return (
@@ -47,13 +52,23 @@ class AudioTable extends Component {
 				</Message>
 			)
 		}
+
 		return (
 			<Table celled striped>
 				<Table.Header>
 					<Table.Row>
 						<Table.HeaderCell colSpan='2'>
 							<span className='fleft'>BugFoot Audio Files</span>
-							<Input size='small' placeholder="Filter..." className='fright' onChange={this.handleChange} />
+							<Input
+                                icon
+                                size='small'
+                                placeholder="Filter..."
+                                className='fright'
+                                onChange={this.handleChange}
+                            >
+                                <input value={this.props.filter} />
+                                <Icon name={this.props.filter.length > 0 ? 'remove circle' : 'search'} link onClick={this.clearFilter}/>
+                            </Input>
 						</Table.HeaderCell>
 					</Table.Row>
 				</Table.Header>
@@ -70,7 +85,8 @@ class AudioTable extends Component {
 const mapStateToProps = (state) => {
     return {
         files: state.files.items.filter(item => item.name.toLowerCase().includes(state.files.filter.toLowerCase())),
-		loading: state.files.isFetching
+		loading: state.files.isFetching,
+        filter: state.files.filter
     }
 }
 
