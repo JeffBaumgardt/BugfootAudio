@@ -2,7 +2,7 @@ import { REQUEST_FILES, RECIEVE_FILES, FILTER_FILES } from './actions'
 
 export default function reducer(state = {
     isFetching: false,
-    items: [],
+    files: [],
 	filter: ''
 }, action) {
     switch (action.type) {
@@ -12,7 +12,7 @@ export default function reducer(state = {
             })
         case RECIEVE_FILES:
             return Object.assign({}, state, {
-                items: action.files,
+                files: action.files,
                 isFetching: false,
                 lastUpdated: action.recievedAt
             })
@@ -24,3 +24,7 @@ export default function reducer(state = {
             return state
     }
 }
+
+export const getFilteredFiles = (files, filter) => files.filter(file => {
+    return file.name.toLowerCase().includes(filter.toLowerCase())
+})

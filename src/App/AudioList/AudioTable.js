@@ -4,6 +4,7 @@ import ReactAudioPlayer from 'react-audio-player'
 import { connect } from 'react-redux'
 import fetchAudioFiles from './API'
 import { requestFiles, recieveFiles, filterFiles } from './actions'
+import { getFilteredFiles } from './reducer'
 import './AudioFile.css'
 
 const ListItem = ({name, url}) => {
@@ -24,21 +25,23 @@ class AudioTable extends Component {
 		super()
 		this.handleChange = this.handleChange.bind(this)
         this.clearFilter = this.clearFilter.bind(this)
+        this.dispatchFilter = this.dispatchFilter.bind(this)
 	}
     componentDidMount() {
-        this.props.dispatch(requestFiles())
-		fetchAudioFiles().then((files) =>
-			this.props.dispatch(recieveFiles(files))
-		)
+        this.props.requestFiles()
+		fetchAudioFiles().then(this.props.recieveFiles)
     }
 
 	handleChange(e) {
-		console.log(e.target.value)
-        this.props.dispatch(filterFiles(e.target.value))
+        this.dispatchFilter(e.target.value)
 	}
 
     clearFilter() {
-        this.props.dispatch(filterFiles(''))
+        this.dispatchFilter('')
+    }
+
+    dispatchFilter(text) {
+        this.props.updateFilter(text)
     }
 
 	render() {
@@ -83,11 +86,26 @@ class AudioTable extends Component {
 }
 
 const mapStateToProps = (state) => {
+    const { audio } = state
     return {
-        files: state.files.items.filter(item => item.name.toLowerCase().includes(state.files.filter.toLowerCase())),
-		loading: state.files.isFetching,
-        filter: state.files.filter
+        files: getFilteredFiles(audio.files, audio.filter),
+		loading: state.audio.isFetching,
+        filter: state.audio.filter
     }
 }
 
-export default connect(mapStateToProps)(AudioTable)
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateFilter: (text) => {
+            dispatch(filterFiles(text))
+        },
+        requestFiles: () => {
+            dispatch(requestFiles())
+        },
+        recieveFiles: (files) => {
+            dispatch(recieveFiles(files))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AudioTable)

@@ -3,7 +3,7 @@ import filesReducer from '../App/AudioList/reducer'
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
-      files: filesReducer,
+      audio: filesReducer,
     ...asyncReducers
   })
 }
