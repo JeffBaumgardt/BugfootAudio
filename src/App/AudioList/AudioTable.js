@@ -20,27 +20,21 @@ const ListItem = ({name, url}) => {
 	)
 }
 
-class AudioTable extends Component {
-	constructor() {
-		super()
-		this.handleChange = this.handleChange.bind(this)
-        this.clearFilter = this.clearFilter.bind(this)
-        this.dispatchFilter = this.dispatchFilter.bind(this)
-	}
+class AudioTable extends Component {	
     componentDidMount() {
         this.props.requestFiles()
 		fetchAudioFiles().then(this.props.recieveFiles)
     }
 
-	handleChange(e) {
+	handleChange = (e) => {
         this.dispatchFilter(e.target.value)
 	}
 
-    clearFilter() {
+    clearFilter = () => {
         this.dispatchFilter('')
     }
 
-    dispatchFilter(text) {
+    dispatchFilter = (text) => {
         this.props.updateFilter(text)
     }
 
